@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Operator Absensi PT. Palma Pertiwi Makmur</title>
+    <title>Panel Operator Absensi Real-Time - PT. Palma Pertiwi Makmur</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <link rel="manifest" href="./manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -40,51 +41,53 @@
             <div id="device-alert" class="mb-3 p-2 rounded text-xs font-semibold text-center hidden"></div>
 
             <!-- Tombol Navigasi Menu -->
-            <div class="grid grid-cols-4 gap-1 mb-3">
-                <button onclick="gantiTab('scan')" id="btn-scan" class="py-2 bg-blue-600 text-white rounded-lg text-[11px] font-medium shadow">Scan Absen</button>
-                <button onclick="validasiAkses('karyawan')" id="btn-karyawan" class="py-2 bg-gray-200 text-gray-700 rounded-lg text-[11px] font-medium">🔒 Karyawan</button>
-                <button onclick="validasiAkses('absen')" id="btn-absen" class="py-2 bg-gray-200 text-gray-700 rounded-lg text-[11px] font-medium">🔒 Rekap Absen</button>
-                <button onclick="validasiAkses('device')" id="btn-device" class="py-2 bg-gray-200 text-gray-700 rounded-lg text-[11px] font-medium">🔒 Perangkat</button>
+            <div class="grid grid-cols-3 gap-1.5 mb-3">
+                <button onclick="gantiTab('scan')" id="btn-scan" class="py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold shadow">📱 Scan Absen</button>
+                <button onclick="validasiAkses('karyawan')" id="btn-karyawan" class="py-2 bg-gray-200 text-gray-700 rounded-lg text-xs font-semibold">🔒 Karyawan</button>
+                <button onclick="validasiAkses('device')" id="btn-device" class="py-2 bg-gray-200 text-gray-700 rounded-lg text-xs font-semibold">🔒 Perangkat</button>
             </div>
 
-            <!-- Tab 1: Scanner Absensi -->
+            <!-- TAB 1: SCANNER ABSENSI -->
             <div id="tab-scan">
                 <div class="bg-white p-2 rounded-t border border-b-0 text-center text-xs text-blue-600 font-bold">
-                    📱 Silakan arahkan Barcode/QR ID Card ke kamera
+                    📱 Arahkan Barcode/QR ID Card ke kamera
                 </div>
                 <div id="scanner-wrapper" class="border-2 border-dashed border-gray-300 rounded-b-lg p-2 text-center bg-gray-50 space-y-2">
-                    <!-- Tombol & Dropdown Pilih/Putar Kamera -->
                     <div class="flex items-center justify-between space-x-2">
-                        <select id="camera-select" class="bg-white border border-gray-300 text-gray-900 text-xs rounded-lg p-2 flex-1 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Memuat daftar kamera...</option>
+                        <select id="camera-select" class="bg-white border border-gray-300 text-gray-900 text-xs rounded-lg p-2 flex-1">
+                            <option value="">Kamera Utama Aktif</option>
                         </select>
-                        <button onclick="tukarKameraManual()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-3 py-2 rounded-lg transition-all duration-200 shadow-sm">
+                        <button onclick="tukarKameraManual()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-3 py-2 rounded-lg shadow-sm">
                             🔄 Putar
                         </button>
                     </div>
                 
                     <div id="reader" class="w-full"></div>
-                    <div id="scan-result" class="mt-2 p-2 rounded text-sm bg-white border font-medium text-gray-700">
+                    
+                    <!-- AREA STATUS TAMPILAN HASIL SCAN & INFO KARYAWAN -->
+                    <div id="scan-result" class="mt-2 p-3 rounded-lg bg-white border text-center text-sm font-medium text-gray-700 shadow-sm min-h-[60px] flex flex-col justify-center items-center">
                         Memeriksa status perangkat...
                     </div>
                 </div>
             </div>
 
-            <!-- Tab 2: Data Karyawan & Generator QR -->
+            <!-- TAB 2: DATA KARYAWAN & GENERATOR ID CARD BARCODE -->
             <div id="tab-karyawan" class="hidden space-y-4">
                 <div class="bg-gray-50 p-3 rounded border">
-                    <h2 class="font-bold text-gray-700 mb-2 text-sm">Daftar Karyawan Baru & Foto</h2>
-                    <input type="text" id="input-nik" placeholder="Masukkan NIK" class="w-full p-1.5 text-sm border rounded mb-2">
-                    <input type="text" id="input-id" placeholder="ID Karyawan (cth: 26TKS017)" class="w-full p-1.5 text-sm border rounded mb-2">
-                    <input type="text" id="input-nama" placeholder="Nama Lengkap & Gelar" class="w-full p-1.5 text-sm border rounded mb-2">
+                    <h2 class="font-bold text-gray-700 mb-2 text-sm">Pendaftaran Karyawan Baru & Generator ID Card</h2>
+                    <input type="text" id="input-nik" placeholder="Masukkan NIK" class="w-full p-1.5 text-xs border rounded mb-2">
+                    <input type="text" id="input-id" placeholder="ID Karyawan (cth: 26TKS017)" class="w-full p-1.5 text-xs border rounded mb-2">
+                    <input type="text" id="input-nama" placeholder="Nama Lengkap & Gelar" class="w-full p-1.5 text-xs border rounded mb-2">
                     
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Upload Pas Foto Karyawan:</label>
                     <input type="file" id="input-foto" accept="image/*" class="w-full text-xs text-gray-500 mb-3 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
 
-                    <button onclick="tambahDanGenerate()" class="w-full bg-green-600 text-white py-1.5 rounded text-sm font-semibold">Simpan & Buat ID Card</button>
+                    <button onclick="tambahDanGenerate()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded text-xs font-bold shadow">
+                        💾 Simpan & Buat ID Card Barcode
+                    </button>
                 </div>
 
-                <!-- Area Preview & Download ID Card -->
+                <!-- Preview & Download ID Card -->
                 <div id="container-qrcode" class="bg-white p-3 rounded border text-center hidden">
                     <h3 class="font-bold text-gray-700 text-sm mb-1">Pratinjau ID Card Karyawan</h3>
                     
@@ -107,134 +110,86 @@
                     </div>
 
                     <div class="mt-2">
-                        <button onclick="downloadIDCardPNG()" class="bg-blue-600 text-white px-4 py-1.5 rounded text-xs font-semibold shadow hover:bg-blue-700">📥 Download Sebagai Gambar PNG</button>
+                        <button onclick="downloadIDCardPNG()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded text-xs font-semibold shadow">
+                            📥 Download Gambar ID Card (.PNG)
+                        </button>
                     </div>
                 </div>
 
+                <!-- Daftar Karyawan Terdaftar -->
                 <div class="bg-white p-3 rounded border">
-                    <h2 class="font-bold text-gray-700 mb-1 text-sm">Database Karyawan Terdaftar</h2>
-                    <input type="text" id="search-karyawan" oninput="pageKaryawan=1; muatDaftarKaryawan();" placeholder="🔍 Cari berdasarkan NIK, ID, atau Nama..." class="w-full p-1.5 text-xs border rounded mb-2 bg-gray-50">
-                    
-                    <div id="list-db-karyawan" class="text-xs text-gray-600 space-y-2 min-h-[120px]">
+                    <h2 class="font-bold text-gray-700 mb-1 text-sm">Daftar Karyawan Terdaftar (Lokal)</h2>
+                    <input type="text" id="search-karyawan" oninput="muatDaftarKaryawan()" placeholder="🔍 Cari nama, ID, atau NIK..." class="w-full p-1.5 text-xs border rounded mb-2 bg-gray-50">
+                    <div id="list-db-karyawan" class="text-xs text-gray-600 space-y-1 min-h-[100px]">
                         Memuat data karyawan...
                     </div>
-
-                    <div class="flex justify-between items-center mt-3 pt-2 border-t text-xs">
-                        <button onclick="gantiHalamanKaryawan(-1)" id="btn-prev-karyawan" class="px-3 py-1 bg-gray-200 rounded font-semibold text-gray-700 hover:bg-gray-300">⬅️ Prev</button>
-                        <span id="page-info-karyawan" class="text-gray-500">Hal 1 dari 1</span>
-                        <button onclick="gantiHalamanKaryawan(1)" id="btn-next-karyawan" class="px-3 py-1 bg-gray-200 rounded font-semibold text-gray-700 hover:bg-gray-300">Next ➡️</button>
-                    </div>
                 </div>
             </div>
 
-            <!-- Tab 3: Rekap Absensi & Export ke Bendahara -->
-            <div id="tab-absen" class="hidden space-y-3">
-                <div class="bg-white p-3 rounded border">
-                    <div class="flex justify-between items-center mb-2">
-                        <h2 class="font-bold text-gray-700 text-sm">Laporan Master untuk Bendahara</h2>
-                        <button onclick="exportKeExcelRapi()" class="bg-emerald-600 text-white px-3 py-1 rounded text-xs font-semibold shadow hover:bg-emerald-700">📥 Download Master Excel (.xls)</button>
-                    </div>
-                    <p class="text-[11px] text-gray-500 mb-2">Mengunduh laporan rekap harian per karyawan secara otomatis dan terstruktur.</p>
-                    
-                    <input type="text" id="search-absen" oninput="pageAbsen=1; muatRiwayat();" placeholder="🔍 Cari riwayat berdasarkan NIK, ID, atau Nama..." class="w-full p-1.5 text-xs border rounded mb-2 bg-gray-50">
-
-                    <div id="list-riwayat" class="text-xs text-gray-600 space-y-1 min-h-[150px]">
-                        Memuat riwayat absensi...
-                    </div>
-
-                    <div class="flex justify-between items-center mt-3 pt-2 border-t text-xs">
-                        <button onclick="gantiHalamanAbsen(-1)" id="btn-prev-absen" class="px-3 py-1 bg-gray-200 rounded font-semibold text-gray-700 hover:bg-gray-300">⬅️ Prev</button>
-                        <span id="page-info-absen" class="text-gray-500">Hal 1 dari 1</span>
-                        <button onclick="gantiHalamanAbsen(1)" id="btn-next-absen" class="px-3 py-1 bg-gray-200 rounded font-semibold text-gray-700 hover:bg-gray-300">Next ➡️</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 4: Pengaturan Perangkat -->
+            <!-- TAB 3: PENGATURAN PERANGKAT -->
             <div id="tab-device" class="hidden space-y-3">
                 <div class="bg-gray-50 p-3 rounded border">
                     <h2 class="font-bold text-gray-700 mb-1 text-sm">Kendali Perangkat Resmi Kantor</h2>
-                    <p class="text-xs text-gray-500 mb-3">Sistem terkunci hanya untuk satu perangkat operasional.</p>
+                    <p class="text-xs text-gray-500 mb-3">Sistem terkunci hanya untuk perangkat operasional yang didaftarkan.</p>
                     
                     <div id="device-info-box" class="p-2 mb-3 bg-white border rounded text-xs text-gray-600">
                         Status Token: Memuat...
                     </div>
 
-                    <button onclick="daftarkanPerangkatIni()" class="w-full bg-blue-600 text-white py-2 rounded text-xs font-semibold mb-2">Jadikan Perangkat Ini Sebagai Resmi</button>
-                    <button onclick="resetPerangkat()" class="w-full bg-red-600 text-white py-2 rounded text-xs font-semibold">Ganti Perangkat Baru (Jika Rusak)</button>
+                    <button onclick="daftarkanPerangkatIni()" class="w-full bg-blue-600 text-white py-2 rounded text-xs font-semibold mb-2 shadow">Jadikan Perangkat Ini Sebagai Resmi</button>
+                    <button onclick="resetPerangkat()" class="w-full bg-red-600 text-white py-2 rounded text-xs font-semibold">Ganti Perangkat Baru (Jika Rusak/Ganti HP)</button>
                 </div>
             </div>
         </main>
     </div>
 
     <script>
+        // URL GOOGLE APPS SCRIPT
         const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbzVA6c_xFJHIGz43HMyhToiYYFnJSTtyZbF6pM5taCKo0sezd0MEFfxQoTiI_B4ly1k/exec";
         const PASSWORD_OPERATOR = "w1ll14m5"; 
-        const LIMIT_DATA = 10;
-        let pageKaryawan = 1;
-        let pageAbsen = 1;
 
-        // --- DATABASE LOCAL INDEXEDDB (VERSI 2) ---
-        let db;
-        const dbName = "PalmaPertiwiDB";
-        const dbVersion = 2;
-
-        const dbRequest = indexedDB.open(dbName, dbVersion);
-
-        dbRequest.onerror = function(event) {
-            console.error("Gagal membuka IndexedDB", event);
-        };
-
-        dbRequest.onsuccess = function(event) {
-            db = event.target.result;
-            inisialisasiDataAwal();
-        };
-
-        dbRequest.onupgradeneeded = function(event) {
-            db = event.target.result;
-            if (!db.objectStoreNames.contains("karyawan")) {
-                const storeKaryawan = db.createObjectStore("karyawan", { keyPath: "id", autoIncrement: true });
-                storeKaryawan.createIndex("nik", "nik", { unique: false });
-                storeKaryawan.createIndex("id_karyawan", "id_karyawan", { unique: false });
-            }
-            if (!db.objectStoreNames.contains("riwayat")) {
-                const storeRiwayat = db.createObjectStore("riwayat", { keyPath: "id", autoIncrement: true });
-                storeRiwayat.createIndex("tanggal", "tanggal", { unique: false });
-            }
-        };
-
-        function inisialisasiDataAwal() {
-            if (!db) return;
-            const transaction = db.transaction(["karyawan"], "readonly");
-            const store = transaction.objectStore("karyawan");
-            const countRequest = store.count();
-
-            countRequest.onsuccess = function() {
-                if (countRequest.result === 0) {
-                    const transWrite = db.transaction(["karyawan"], "readwrite");
-                    const storeWrite = transWrite.objectStore("karyawan");
-                    storeWrite.add({ 
-                        nik: "9171031702930002", 
-                        id_karyawan: "26TKS017", 
-                        nama: "Fernando Williams Edison Sanggenafa, ST.", 
-                        foto: "" 
-                    });
-                    transWrite.oncomplete = function() {
-                        muatDaftarKaryawan();
-                    };
-                } else {
-                    muatDaftarKaryawan();
-                }
-            };
-            muatRiwayat();
-        }
-
-        setInterval(() => {
+        // 1. JAM DIGITAL REAL-TIME
+        function updateJam() {
             const now = new Date();
             const jamEl = document.getElementById('live-clock');
             if (jamEl) jamEl.innerText = now.toTimeString().split(' ')[0];
-        }, 1000);
+        }
+        setInterval(updateJam, 1000);
+        updateJam();
 
+        // 2. DATABASE LOKAL UNTUK SIMPAN DATA KARYAWAN & FOTO
+        let db;
+        const dbRequest = indexedDB.open("PalmaPertiwiDB", 1);
+
+        dbRequest.onsuccess = function(e) {
+            db = e.target.result;
+            inisialisasiDataKaryawanAwal();
+        };
+
+        dbRequest.onupgradeneeded = function(e) {
+            db = e.target.result;
+            if (!db.objectStoreNames.contains("karyawan")) {
+                db.createObjectStore("karyawan", { keyPath: "id", autoIncrement: true });
+            }
+        };
+
+        function inisialisasiDataKaryawanAwal() {
+            const tx = db.transaction(["karyawan"], "readonly");
+            const store = tx.objectStore("karyawan");
+            store.count().onsuccess = function(e) {
+                if (e.target.result === 0) {
+                    const transWrite = db.transaction(["karyawan"], "readwrite");
+                    transWrite.objectStore("karyawan").add({
+                        nik: "9171031702930002",
+                        id_karyawan: "26TKS017",
+                        nama: "Fernando Williams Edison Sanggenafa, ST.",
+                        foto: ""
+                    });
+                }
+            };
+        }
+
+        // 3. CEK & OTENTIKASI HAK PERANGKAT
         window.addEventListener('DOMContentLoaded', () => {
             cekStatusPerangkat();
         });
@@ -255,12 +210,12 @@
                 document.getElementById('device-info-box').innerHTML = "<b>Status:</b> Belum Terdaftar.";
             } else {
                 alertBox.className = "mb-3 p-2 rounded text-xs font-semibold text-center bg-green-100 text-green-700";
-                alertBox.innerText = "✔️ Perangkat Siap Digunakan untuk Absensi.";
+                alertBox.innerText = "✔️ Perangkat Siap Digunakan.";
                 alertBox.classList.remove('hidden');
 
                 scannerWrapper.classList.remove('opacity-50', 'pointer-events-none');
                 document.getElementById('device-info-box').innerHTML = `<b>Status:</b> Aktif<br><span class="text-[10px] text-gray-400">Token: ${officialToken}</span>`;
-                mulaiKamera();
+                setTimeout(inisialisasiKameraLangsung, 400);
             }
         }
 
@@ -271,7 +226,7 @@
             if (inputPass === PASSWORD_OPERATOR) {
                 gantiTab(tab);
             } else {
-                alert("❌ Password salah! Anda tidak memiliki hak akses ke menu operator.");
+                alert("❌ Password salah! Anda tidak memiliki hak akses.");
             }
         }
 
@@ -283,7 +238,7 @@
         }
 
         function resetPerangkat() {
-            if (confirm("Yakin ingin melepas perangkat ini?")) {
+            if (confirm("Yakin ingin melepas perangkat ini? Scanner di HP ini akan terkunci.")) {
                 localStorage.removeItem('OFFICIAL_DEVICE_TOKEN');
                 alert("Perangkat berhasil dilepas.");
                 location.reload();
@@ -291,233 +246,43 @@
         }
 
         function gantiTab(tab) {
-            const tabs = ['scan', 'karyawan', 'absen', 'device'];
-            tabs.forEach(t => {
-                document.getElementById('tab-' + t).classList.add('hidden');
-                document.getElementById('btn-' + t).className = "py-2 bg-gray-200 text-gray-700 rounded-lg text-[11px] font-medium";
+            ['scan', 'karyawan', 'device'].forEach(t => {
+                const elTab = document.getElementById('tab-' + t);
+                const elBtn = document.getElementById('btn-' + t);
+                if (elTab) elTab.classList.add('hidden');
+                if (elBtn) elBtn.className = "py-2 bg-gray-200 text-gray-700 rounded-lg text-xs font-semibold";
             });
 
             document.getElementById('tab-' + tab).classList.remove('hidden');
-            document.getElementById('btn-' + tab).className = "py-2 bg-blue-600 text-white rounded-lg text-[11px] font-medium shadow";
+            document.getElementById('btn-' + tab).className = "py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold shadow";
 
             if (tab === 'karyawan') muatDaftarKaryawan();
-            if (tab === 'absen') muatRiwayat();
         }
 
-        function evaluasiAbsensi(jamStr) {
-            const jam = jamStr.substring(0, 5);
-
-            if (jam >= "06:30" && jam <= "07:30") {
-                return { jenis: "Masuk", status: "Tepat Waktu" };
-            } else if (jam > "07:30" && jam <= "11:59") {
-                return { jenis: "Masuk", status: "Terlambat" };
-            } else if (jam >= "12:00" && jam <= "13:00") {
-                return { jenis: "Kembali Istirahat", status: "Tepat Waktu" };
-            } else if (jam > "13:00" && jam <= "14:59") {
-                return { jenis: "Kembali Istirahat", status: "Terlambat" };
-            } else if (jam >= "15:00" && jam <= "16:00") {
-                return { jenis: "Pulang", status: "Pulang Tepat Waktu" };
-            } else if (jam > "16:00") {
-                return { jenis: "Pulang", status: "Lembur" };
-            } else {
-                return { jenis: "Diluar Jadwal", status: "Diluar Jam Absen" };
-            }
-        }
-
-        let lastScanTime = 0;
-        let lastScanId = "";
-
-        // --- FUNGSI PEMINDAIAN & GOOGLE SHEETS CLOUD ---
-        function onScanSuccess(decodedText) {
-            if (!localStorage.getItem('OFFICIAL_DEVICE_TOKEN')) {
-                alert("Absen ditolak! Perangkat belum resmi.");
-                return;
-            }
-
-            const currentTime = new Date().getTime();
-            if (decodedText === lastScanId && (currentTime - lastScanTime < 4000)) {
-                return; 
-            }
-
-            let nikScan = " - ";
-            let idScan = decodedText.trim(); // Mengambil nilai ID langsung dari QR Code ringkas
-            let namaScan = "Karyawan PT PPM";
-
-            const now = new Date();
-            const jamString = now.toTimeString().split(' ')[0];
-            const tanggalString = now.toISOString().split('T')[0];
-            const hasilAturan = evaluasiAbsensi(jamString);
-
-            if (!db) {
-                lanjutkanKirimKeCloud(nikScan, idScan, namaScan, tanggalString, jamString, hasilAturan, currentTime, decodedText);
-                return;
-            }
-
-            // Cari data lengkap karyawan berdasarkan ID dari database lokal
-            const transaction = db.transaction(["karyawan"], "readonly");
-            const storeKaryawan = transaction.objectStore("karyawan");
-            storeKaryawan.getAll().onsuccess = function(eKaryawan) {
-                const listKaryawan = eKaryawan.target.result || [];
-                const karyawan = listKaryawan.find(k => k.id_karyawan === idScan || k.nik === idScan);
-                
-                if (karyawan) {
-                    namaScan = karyawan.nama;
-                    nikScan = karyawan.nik;
-                    idScan = karyawan.id_karyawan;
-                }
-
-                lanjutkanKirimKeCloud(nikScan, idScan, namaScan, tanggalString, jamString, hasilAturan, currentTime, decodedText);
-            };
-        }
-
-        function lanjutkanKirimKeCloud(nikScan, idScan, namaScan, tanggalString, jamString, hasilAturan, currentTime, decodedText) {
-            const resultDiv = document.getElementById('scan-result');
-            resultDiv.className = "mt-2 p-2 rounded text-sm bg-blue-50 border border-blue-200 text-blue-900 font-medium";
-            resultDiv.innerHTML = `<span class="text-blue-700 font-bold">⏳ Mengirim ke Google Sheets: ${namaScan}...</span>`;
-
-            const payloadData = {
-                tanggal: tanggalString,
-                jam: jamString,
-                id: idScan,
-                nik: nikScan,
-                nama: namaScan,
-                jenis: hasilAturan.jenis,
-                status: hasilAturan.status
-            };
-
-            fetch(URL_GOOGLE_SCRIPT, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payloadData)
-            })
-            .then(() => {
-                lastScanTime = currentTime;
-                lastScanId = decodedText;
-                resultDiv.className = "mt-2 p-2 rounded text-sm bg-emerald-50 border border-emerald-300 text-emerald-900 font-medium";
-                resultDiv.innerHTML = `
-                    <div class="font-extrabold text-emerald-700 text-sm">✅ BERHASIL ABSEN (CLOUD)</div>
-                    <div class="font-bold text-gray-900 text-sm mt-0.5">${namaScan}</div>
-                    <div class="text-[11px] text-blue-800 font-semibold">ID: ${idScan} | NIK: ${nikScan}</div>
-                    <div class="text-[11px] text-emerald-800 font-semibold mt-1">Sesi: ${hasilAturan.jenis} (${hasilAturan.status}) | Jam: ${jamString}</div>
-                `;
-                simpanRiwayatLokal(namaScan, idScan, nikScan, tanggalString, jamString, hasilAturan.jenis, hasilAturan.status);
-            })
-            .catch(err => {
-                resultDiv.className = "mt-2 p-2 rounded text-sm bg-red-50 border border-red-300 text-red-900 font-medium";
-                resultDiv.innerHTML = `<span class="text-red-600 font-bold">❌ Gagal kirim ke Cloud: ${err}</span>`;
-            });
-        }
-
-        function simpanRiwayatLokal(nama, id, nik, tanggal, jam, jenis, status) {
-            if (!db) return;
-            const transaction = db.transaction(["riwayat"], "readwrite");
-            const store = transaction.objectStore("riwayat");
-            store.add({ nama, id, nik, tanggal, jam, jenis, status });
-            transaction.oncomplete = function() {
-                muatRiwayat();
-            };
-        }
-
-        // --- SISTEM KAMERA ANTI-ERROR ---
-        let html5QrCode = null;
-        let saatIniFacingMode = "environment"; 
-
-        function mulaiKamera() {
-            if (typeof Html5Qrcode === 'undefined') return;
-            if (!html5QrCode) {
-                html5QrCode = new Html5Qrcode("reader");
-            }
-
-            Html5Qrcode.getCameras().then(devices => {
-                const selectElem = document.getElementById('camera-select');
-                if (devices && devices.length > 0) {
-                    selectElem.innerHTML = '';
-                    devices.forEach((device, index) => {
-                        const option = document.createElement('option');
-                        option.value = device.id;
-                        option.text = device.label || `Kamera ${index + 1}`;
-                        selectElem.appendChild(option);
-                    });
-
-                    jalankanScanner({ deviceId: selectElem.value });
-
-                    selectElem.onchange = function() {
-                        hentikanDanJalankanKamera({ deviceId: this.value });
-                    };
-                } else {
-                    jalankanScanner({ facingMode: saatIniFacingMode });
-                }
-            }).catch(err => {
-                jalankanScanner({ facingMode: saatIniFacingMode });
-            });
-        }
-
-        function jalankanScanner(cameraConfig) {
-            const config = { fps: 10, qrbox: 200 };
-            
-            if (html5QrCode && html5QrCode.isScanning) {
-                return;
-            }
-
-            html5QrCode.start(cameraConfig, config, onScanSuccess)
-            .then(() => {
-                document.getElementById('scan-result').innerHTML = 
-                    `<span class="text-green-600 font-semibold">✅ Perangkat Siap. Arahkan Barcode!</span>`;
-            })
-            .catch(err => {
-                html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
-                .then(() => {
-                    document.getElementById('scan-result').innerHTML = 
-                        `<span class="text-green-600 font-semibold">✅ Kamera Utama Aktif. Arahkan Barcode!</span>`;
-                })
-                .catch(e => {
-                    document.getElementById('scan-result').innerHTML = 
-                        `<span class="text-red-600">❌ Gagal membuka kamera: ${e}</span>`;
-                });
-            });
-        }
-
-        function hentikanDanJalankanKamera(cameraConfig) {
-            if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().then(() => {
-                    jalankanScanner(cameraConfig);
-                }).catch(err => {
-                    jalankanScanner(cameraConfig);
-                });
-            } else {
-                jalankanScanner(cameraConfig);
-            }
-        }
-
-        function tukarKameraManual() {
-            saatIniFacingMode = (saatIniFacingMode === "environment") ? "user" : "environment";
-            hentikanDanJalankanKamera({ facingMode: saatIniFacingMode });
-        }
-
+        // 4. GENERATOR QR BARCODE & PEMBUATAN ID CARD
         function tambahDanGenerate() {
             const nik = document.getElementById('input-nik').value.trim();
             const id = document.getElementById('input-id').value.trim();
             const nama = document.getElementById('input-nama').value.trim();
             const fileInput = document.getElementById('input-foto');
 
-            if(!nik || !id || !nama) {
-                alert("NIK, ID, dan Nama wajib diisi!");
+            if (!nik || !id || !nama) {
+                alert("NIK, ID Karyawan, dan Nama Wajib Diisi!");
                 return;
             }
 
             if (fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    kompresDanSimpanKaryawan(nik, id, nama, e.target.result);
+                    kompresDanSimpan(nik, id, nama, e.target.result);
                 };
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
-                simpanDataKaryawan(nik, id, nama, "");
+                simpanKaryawanKeDB(nik, id, nama, "");
             }
         }
 
-        function kompresDanSimpanKaryawan(nik, id, nama, dataUrl) {
+        function kompresDanSimpan(nik, id, nama, dataUrl) {
             const img = new Image();
             img.src = dataUrl;
             img.onload = function() {
@@ -526,20 +291,17 @@
                 canvas.height = 250;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, 200, 250);
-                simpanDataKaryawan(nik, id, nama, canvas.toDataURL('image/jpeg', 0.7));
+                simpanKaryawanKeDB(nik, id, nama, canvas.toDataURL('image/jpeg', 0.7));
             };
         }
 
-        function simpanDataKaryawan(nik, id, nama, foto) {
+        function simpanKaryawanKeDB(nik, id, nama, foto) {
             if (!db) return;
-            const transaction = db.transaction(["karyawan"], "readwrite");
-            const store = transaction.objectStore("karyawan");
-            
-            store.add({ nik, id_karyawan: id, nama, foto });
-
-            transaction.oncomplete = function() {
+            const tx = db.transaction(["karyawan"], "readwrite");
+            tx.objectStore("karyawan").add({ nik, id_karyawan: id, nama, foto });
+            tx.oncomplete = function() {
                 tampilkanKartu(nik, id, nama, foto);
-                alert("Karyawan berhasil disimpan!");
+                alert("Karyawan Berhasil Disimpan & ID Card Dibuat!");
                 document.getElementById('input-nik').value = '';
                 document.getElementById('input-id').value = '';
                 document.getElementById('input-nama').value = '';
@@ -548,44 +310,8 @@
             };
         }
 
-        function gantiFotoKaryawan(idKey, inputElement) {
-            if (inputElement.files && inputElement.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = 200;
-                        canvas.height = 250;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, 200, 250);
-                        const compressed = canvas.toDataURL('image/jpeg', 0.7);
-
-                        const transaction = db.transaction(["karyawan"], "readwrite");
-                        const store = transaction.objectStore("karyawan");
-                        const getReq = store.get(idKey);
-
-                        getReq.onsuccess = function() {
-                            let karyawan = getReq.result;
-                            karyawan.foto = compressed;
-                            store.put(karyawan);
-
-                            transaction.oncomplete = function() {
-                                alert("Foto berhasil diperbarui!");
-                                muatDaftarKaryawan();
-                                tampilkanKartu(karyawan.nik, karyawan.id_karyawan, karyawan.nama, karyawan.foto);
-                            };
-                        };
-                    };
-                };
-                reader.readAsDataURL(inputElement.files[0]);
-            }
-        }
-
         function tampilkanKartu(nik, id, nama, foto) {
-            // MENGGUNAKAN FORMAT ID RINGKAS SEPERTI KARTU LAMA AGAR MUDAH DIBACA KAMERA
-            const teksQr = id;
+            const teksQr = nik + "|" + id + "|" + nama;
 
             document.getElementById('container-qrcode').classList.remove('hidden');
             document.getElementById('preview-nama').innerText = nama;
@@ -607,11 +333,8 @@
             document.getElementById('qrcode').innerHTML = "";
             new QRCode(document.getElementById("qrcode"), {
                 text: teksQr,
-                width: 140,
-                height: 140,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.M
+                width: 120,
+                height: 120
             });
         }
 
@@ -624,9 +347,8 @@
                 useCORS: true,
                 backgroundColor: "#ffffff"
             }).then(canvas => {
-                const imageURI = canvas.toDataURL("image/png");
                 const downloadLink = document.createElement("a");
-                downloadLink.href = imageURI;
+                downloadLink.href = canvas.toDataURL("image/png");
                 downloadLink.download = "ID_Card_" + namaKaryawan.replace(/[^a-zA-Z0-9]/g, "_") + ".png";
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
@@ -636,242 +358,187 @@
 
         function muatDaftarKaryawan() {
             if (!db) return;
-            const transaction = db.transaction(["karyawan"], "readonly");
-            const store = transaction.objectStore("karyawan");
-            store.getAll().onsuccess = function(e) {
-                const listKaryawan = e.target.result || [];
+            const tx = db.transaction(["karyawan"], "readonly");
+            tx.objectStore("karyawan").getAll().onsuccess = function(e) {
+                const list = e.target.result || [];
                 const container = document.getElementById('list-db-karyawan');
                 const keyword = document.getElementById('search-karyawan').value.toLowerCase();
 
-                const filtered = listKaryawan.filter(k => 
+                const filtered = list.filter(k => 
                     k.nik.toLowerCase().includes(keyword) || 
                     k.id_karyawan.toLowerCase().includes(keyword) || 
                     k.nama.toLowerCase().includes(keyword)
                 );
 
-                const totalPage = Math.ceil(filtered.length / LIMIT_DATA) || 1;
-                if (pageKaryawan > totalPage) pageKaryawan = totalPage;
-                if (pageKaryawan < 1) pageKaryawan = 1;
-
-                const start = (pageKaryawan - 1) * LIMIT_DATA;
-                const paginatedData = filtered.slice(start, start + LIMIT_DATA);
-
-                document.getElementById('page-info-karyawan').innerText = `Hal ${pageKaryawan} dari ${totalPage}`;
-                document.getElementById('btn-prev-karyawan').disabled = pageKaryawan === 1;
-                document.getElementById('btn-next-karyawan').disabled = pageKaryawan === totalPage;
-
-                if (paginatedData.length === 0) {
-                    container.innerHTML = "<div class='text-center py-4 text-gray-400'>Karyawan tidak ditemukan.</div>";
+                if (filtered.length === 0) {
+                    container.innerHTML = "<div class='text-center py-3 text-gray-400'>Belum ada karyawan.</div>";
                     return;
                 }
 
                 let html = "";
-                paginatedData.forEach((k) => {
-                    const fotoThumbnail = k.foto ? `<img src="${k.foto}" class="w-8 h-10 object-cover rounded border">` : `<div class="w-8 h-10 bg-gray-200 rounded flex items-center justify-center text-[9px] text-gray-400">No</div>`;
-                    
-                    html += `<div class="p-2 bg-gray-50 border rounded flex justify-between items-center hover:bg-blue-50 transition mb-1">
-                        <div onclick="tampilkanKartu('${k.nik}', '${k.id_karyawan}', '${k.nama}', '${k.foto || ''}')" class="cursor-pointer flex items-center space-x-2 flex-1">
-                            ${fotoThumbnail}
-                            <div>
-                                <strong class="text-blue-900 underline text-xs">${k.nama}</strong><br>
-                                <span class="text-gray-500 text-[10px]">ID: ${k.id_karyawan} | NIK: ${k.nik}</span>
-                            </div>
+                filtered.forEach(k => {
+                    html += `<div class="p-2 bg-gray-50 border rounded flex justify-between items-center mb-1">
+                        <div onclick="tampilkanKartu('${k.nik}', '${k.id_karyawan}', '${k.nama}', '${k.foto || ''}')" class="cursor-pointer">
+                            <strong class="text-blue-900 text-xs hover:underline">${k.nama}</strong><br>
+                            <span class="text-gray-500 text-[10px]">ID: ${k.id_karyawan} | NIK: ${k.nik}</span>
                         </div>
-                        <div class="flex items-center space-x-1">
-                            <label class="cursor-pointer bg-blue-50 text-blue-700 border border-blue-200 px-2 py-1 rounded text-[10px] font-semibold hover:bg-blue-100">
-                                📷 Ganti
-                                <input type="file" accept="image/*" class="hidden" onchange="gantiFotoKaryawan(${k.id}, this)">
-                            </label>
-                            <button onclick="hapusKaryawan(${k.id})" class="text-red-600 font-bold px-2 py-1 text-[10px] bg-red-50 rounded border border-red-200 hover:bg-red-100">Hapus</button>
-                        </div>
+                        <button onclick="hapusKaryawan(${k.id})" class="text-red-600 font-bold px-2 py-1 text-[10px] bg-red-50 rounded border border-red-200">Hapus</button>
                     </div>`;
                 });
                 container.innerHTML = html;
             };
-        }
-
-        function gantiHalamanKaryawan(dir) {
-            pageKaryawan += dir;
-            muatDaftarKaryawan();
         }
 
         function hapusKaryawan(idKey) {
             if (confirm("Hapus data karyawan ini?")) {
-                const transaction = db.transaction(["karyawan"], "readwrite");
-                const store = transaction.objectStore("karyawan");
-                store.delete(idKey);
-                transaction.oncomplete = function() {
-                    muatDaftarKaryawan();
-                };
+                const tx = db.transaction(["karyawan"], "readwrite");
+                tx.objectStore("karyawan").delete(idKey);
+                tx.oncomplete = function() { muatDaftarKaryawan(); };
             }
         }
 
-        function muatRiwayat() {
-            if (!db) return;
-            const transaction = db.transaction(["riwayat"], "readonly");
-            const store = transaction.objectStore("riwayat");
-            store.getAll().onsuccess = function(e) {
-                const riwayat = (e.target.result || []).reverse();
-                const container = document.getElementById('list-riwayat');
-                const keyword = document.getElementById('search-absen').value.toLowerCase();
+        // 5. INISIALISASI KAMERA SCANNER
+        let html5QrCode = null;
+        let useEnvironmentCamera = true;
 
-                const filtered = riwayat.filter(r => 
-                    r.nik.toLowerCase().includes(keyword) || 
-                    r.id.toLowerCase().includes(keyword) || 
-                    r.nama.toLowerCase().includes(keyword) ||
-                    r.tanggal.toLowerCase().includes(keyword)
-                );
-                
-                const totalPage = Math.ceil(filtered.length / LIMIT_DATA) || 1;
-                if (pageAbsen > totalPage) pageAbsen = totalPage;
-                if (pageAbsen < 1) pageAbsen = 1;
+        function inisialisasiKameraLangsung() {
+            const resultDiv = document.getElementById('scan-result');
+            if (typeof Html5Qrcode === 'undefined') return;
 
-                const start = (pageAbsen - 1) * LIMIT_DATA;
-                const paginatedData = filtered.slice(start, start + LIMIT_DATA);
+            if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
 
-                document.getElementById('page-info-absen').innerText = `Hal ${pageAbsen} dari ${totalPage}`;
-                document.getElementById('btn-prev-absen').disabled = pageAbsen === 1;
-                document.getElementById('btn-next-absen').disabled = pageAbsen === totalPage;
-
-                if (paginatedData.length === 0) {
-                    container.innerHTML = "<div class='text-center py-4 text-gray-400'>Riwayat absensi tidak ditemukan.</div>";
-                    return;
-                }
-
-                let html = "";
-                paginatedData.forEach(r => {
-                    html += `<div class="p-2 bg-gray-50 border rounded mb-1">
-                        <b>${r.nama}</b> (${r.id})<br>
-                        <span class="text-blue-600">${r.jenis}</span> | Status: <span class="font-semibold">${r.status}</span><br>
-                        <span class="text-gray-400 text-[10px]">${r.tanggal} ${r.jam} | NIK: ${r.nik}</span>
-                    </div>`;
+            const facingModeConfig = useEnvironmentCamera ? { facingMode: "environment" } : { facingMode: "user" };
+            const config = { fps: 10, qrbox: { width: 200, height: 200 } };
+            
+            html5QrCode.start(facingModeConfig, config, onScanSuccess)
+            .then(() => {
+                resultDiv.innerHTML = `<span class="text-green-600 font-semibold">✅ Kamera Aktif. Arahkan Barcode!</span>`;
+            })
+            .catch(() => {
+                html5QrCode.start({ facingMode: "user" }, config, onScanSuccess)
+                .then(() => {
+                    resultDiv.innerHTML = `<span class="text-green-600 font-semibold">✅ Kamera Aktif. Arahkan Barcode!</span>`;
                 });
-                container.innerHTML = html;
-            };
+            });
         }
 
-        function gantiHalamanAbsen(dir) {
-            pageAbsen += dir;
-            muatRiwayat();
+        function tukarKameraManual() {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => {
+                    useEnvironmentCamera = !useEnvironmentCamera;
+                    inisialisasiKameraLangsung();
+                });
+            } else {
+                useEnvironmentCamera = !useEnvironmentCamera;
+                inisialisasiKameraLangsung();
+            }
         }
 
-        function exportKeExcelRapi() {
-            if (!db) {
-                alert("Database belum siap!");
+        let lastScanTime = 0;
+        let lastScanId = "";
+
+        // 6. LOGIKA EVALUASI JAM SESI ABSEN
+        function evaluasiAbsensi(jamStr) {
+            const jam = jamStr.substring(0, 5);
+
+            // Sesi 1: Jam Masuk (06:30 - 11:59)
+            if (jam >= "06:30" && jam <= "07:30") {
+                return { jenis: "Masuk", status: "Tepat Waktu" };
+            } else if (jam > "07:30" && jam <= "11:59") {
+                return { jenis: "Masuk", status: "Terlambat" };
+            } 
+            // Sesi 2: Jam Istirahat / Kembali (12:00 - 14:59)
+            else if (jam >= "12:00" && jam <= "13:00") {
+                return { jenis: "Kembali Istirahat", status: "Tepat Waktu" };
+            } else if (jam > "13:00" && jam <= "14:59") {
+                return { jenis: "Kembali Istirahat", status: "Terlambat" };
+            } 
+            // Sesi 3: Jam Pulang & Lembur (15:30 ke atas)
+            else if (jam >= "15:30" && jam <= "16:00") {
+                return { jenis: "Pulang", status: "Pulang Tepat Waktu" };
+            } else if (jam > "16:00") {
+                return { jenis: "Pulang", status: "Lembur" };
+            } 
+            // Diluar jam operasional
+            else {
+                return { jenis: "Diluar Jadwal", status: "Diluar Jam Absen" };
+            }
+        }
+
+        // 7. SINKRONISASI DATA HASIL SCAN + PENCEGAHAN DUPLIKAT TERINFORMASI
+        function onScanSuccess(decodedText) {
+            if (!localStorage.getItem('OFFICIAL_DEVICE_TOKEN')) {
+                alert("Absen ditolak! Perangkat ini belum resmi.");
                 return;
             }
 
-            const transaction = db.transaction(["riwayat"], "readonly");
-            const store = transaction.objectStore("riwayat");
+            const currentTime = new Date().getTime();
+            if (decodedText === lastScanId && (currentTime - lastScanTime < 5000)) return;
 
-            store.getAll().onsuccess = function(e) {
-                const riwayat = e.target.result || [];
-                if (riwayat.length === 0) {
-                    alert("Belum ada data absensi untuk diexport!");
-                    return;
-                }
+            const parts = decodedText.split('|');
+            const nikScan = parts[0] || decodedText;
+            const idScan = parts[1] || decodedText;
+            const namaScan = parts[2] || "Karyawan PT PPM";
 
-                const masterMap = {};
-                riwayat.forEach(r => {
-                    const kunci = r.tanggal + "_" + r.nik;
-                    if (!masterMap[kunci]) {
-                        masterMap[kunci] = {
-                            tanggal: r.tanggal,
-                            id: r.id,
-                            nik: r.nik,
-                            nama: r.nama,
-                            masuk: "-",
-                            statusMasuk: "-",
-                            istirahat: "-",
-                            statusIstirahat: "-",
-                            pulang: "-",
-                            statusPulang: "-"
-                        };
-                    }
-                    if (r.jenis === "Masuk") {
-                        masterMap[kunci].masuk = r.jam;
-                        masterMap[kunci].statusMasuk = r.status;
-                    } else if (r.jenis === "Kembali Istirahat") {
-                        masterMap[kunci].istirahat = r.jam;
-                        masterMap[kunci].statusIstirahat = r.status;
-                    } else if (r.jenis === "Pulang") {
-                        masterMap[kunci].pulang = r.jam;
-                        masterMap[kunci].statusPulang = r.status;
-                    }
-                });
+            const now = new Date();
+            const jamStr = now.toTimeString().split(' ')[0];
+            const tglStr = now.toISOString().split('T')[0];
+            const evaluasi = evaluasiAbsensi(jamStr);
 
-                const dataMaster = Object.values(masterMap);
+            const resultDiv = document.getElementById('scan-result');
 
-                let excelTemplate = `
-                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
-                <head>
-                    <meta charset="utf-8">
-                    <!--[if gte mso 9]>
-                    <xml>
-                        <x:ExcelWorkbook>
-                            <x:ExcelWorksheets>
-                                <x:ExcelWorksheet>
-                                    <x:Name>Master Rekap Absensi</x:Name>
-                                    <x:WorksheetOptions>
-                                        <x:DisplayGridlines/>
-                                    </x:WorksheetOptions>
-                                </x:ExcelWorksheet>
-                            </x:ExcelWorksheets>
-                        </x:ExcelWorkbook>
-                    </xml>
-                    <![endif]-->
-                    <style>
-                        th { background-color: #2563eb; color: #ffffff; font-weight: bold; text-align: center; height: 35px; border: 1px solid #1e40af; padding: 5px 15px; font-family: Arial; font-size: 11pt; }
-                        td { vertical-align: middle; border: 1px solid #d1d5db; padding: 6px 12px; font-family: Arial; font-size: 10pt; white-space: nowrap; }
-                        .text-center { text-align: center; }
-                        .text-left { text-align: left; }
-                        .str { mso-number-format: "\\@"; }
-                    </style>
-                </head>
-                <body>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 110px;">Tanggal</th>
-                                <th style="width: 100px;">ID Karyawan</th>
-                                <th style="width: 170px;">NIK</th>
-                                <th style="width: 230px;">Nama Karyawan</th>
-                                <th style="width: 90px;">Jam Masuk</th>
-                                <th style="width: 160px;">Status Masuk</th>
-                                <th style="width: 100px;">Jam Istirahat</th>
-                                <th style="width: 160px;">Status Istirahat</th>
-                                <th style="width: 90px;">Jam Pulang</th>
-                                <th style="width: 160px;">Status Pulang</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
+            // --- PERINGATAN ABSEN GANDA DENGAN FORMAT INFORMASI NAMA & ID ---
+            const klemKey = `absen_${idScan}_${tglStr}_${evaluasi.jenis}`;
+            if (localStorage.getItem(klemKey)) {
+                lastScanTime = currentTime;
+                lastScanId = decodedText;
+                resultDiv.className = "mt-2 p-3 rounded-lg bg-amber-50 border border-amber-300 text-center text-xs font-medium text-amber-900 shadow-sm min-h-[60px] flex flex-col justify-center items-center";
+                resultDiv.innerHTML = `
+                    <div class="font-extrabold text-amber-700 text-sm">⚠️ ABSEN SUDAH TERCATAT</div>
+                    <div class="font-bold text-gray-900 mt-0.5">${namaScan} <span class="text-blue-700">(${idScan})</span></div>
+                    <div class="text-[11px] text-amber-800 mt-1">Anda sudah melakukan absen (<b>${evaluasi.jenis}</b>) hari ini.<br>Absen ganda pada sesi yang sama ditolak.</div>
+                `;
+                return;
+            }
 
-                dataMaster.forEach(m => {
-                    excelTemplate += `
-                            <tr>
-                                <td class="text-center str">${m.tanggal}</td>
-                                <td class="text-center str">${m.id}</td>
-                                <td class="text-center str">&nbsp;${m.nik}</td>
-                                <td class="text-left">${m.nama}</td>
-                                <td class="text-center str">${m.masuk}</td>
-                                <td class="text-center">${m.statusMasuk}</td>
-                                <td class="text-center str">${m.istirahat}</td>
-                                <td class="text-center">${m.statusIstirahat}</td>
-                                <td class="text-center str">${m.pulang}</td>
-                                <td class="text-center">${m.statusPulang}</td>
-                            </tr>`;
-                });
+            lastScanTime = currentTime;
+            lastScanId = decodedText;
+            
+            resultDiv.className = "mt-2 p-3 rounded-lg bg-blue-50 border border-blue-200 text-center text-xs font-medium text-blue-900 shadow-sm min-h-[60px] flex flex-col justify-center items-center";
+            resultDiv.innerHTML = `<span class="text-blue-700 font-bold">⏳ Mengirim data ke Google Sheets Cloud...</span><span class="text-[11px] text-gray-600 mt-0.5">${namaScan} (${idScan})</span>`;
 
-                excelTemplate += `</tbody></table></body></html>`;
-
-                const blob = new Blob([excelTemplate], { type: 'application/vnd.ms-excel;charset=utf-8' });
-                const link = document.createElement("a");
-                link.href = URL.createObjectURL(blob);
-                link.download = "Master_Rekap_Absensi_" + new Date().toISOString().split('T')[0] + ".xls";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+            const payloadData = {
+                tanggal: tglStr,
+                jam: jamStr,
+                id: idScan,
+                nik: nikScan,
+                nama: namaScan,
+                jenis: evaluasi.jenis,
+                status: evaluasi.status
             };
+
+            fetch(URL_GOOGLE_SCRIPT, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payloadData)
+            })
+            .then(() => {
+                // Tandai bahwa karyawan ini sudah absen di sesi ini
+                localStorage.setItem(klemKey, "true");
+
+                resultDiv.className = "mt-2 p-3 rounded-lg bg-emerald-50 border border-emerald-300 text-center text-xs font-medium text-emerald-900 shadow-sm min-h-[60px] flex flex-col justify-center items-center";
+                resultDiv.innerHTML = `
+                    <div class="font-extrabold text-emerald-700 text-sm">✅ BERHASIL ABSEN</div>
+                    <div class="font-bold text-gray-900 text-sm mt-0.5">${namaScan}</div>
+                    <div class="text-[11px] text-blue-800 font-semibold">ID: ${idScan} | NIK: ${nikScan}</div>
+                    <div class="text-[11px] text-emerald-800 font-semibold mt-1">Sesi: ${evaluasi.jenis} (${evaluasi.status}) | Jam: ${jamStr}</div>
+                `;
+            })
+            .catch(err => {
+                resultDiv.className = "mt-2 p-3 rounded-lg bg-red-50 border border-red-300 text-center text-xs font-medium text-red-900 shadow-sm min-h-[60px] flex flex-col justify-center items-center";
+                resultDiv.innerHTML = `<span class="text-red-700 font-bold">❌ Gagal kirim data: ${err}</span>`;
+            });
         }
     </script>
 </body>
