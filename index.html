@@ -418,9 +418,9 @@
             };
         }
 
-        // --- SISTEM PENGELOLAAN KAMERA & FLEKSIBILITAS FLIP YANG DISEMPURNAKAN ---
+        // --- SISTEM PENGELOLAAN KAMERA YANG STABIL & BERSIH ---
         let html5QrCode = null;
-        let gunakanKameraBelakang = true; // Status aktif: true untuk belakang (environment), false untuk depan (user)
+        let gunakanKameraBelakang = true; 
 
         function mulaiKamera() {
             if (typeof Html5Qrcode === 'undefined') return;
@@ -428,49 +428,42 @@
                 html5QrCode = new Html5Qrcode("reader");
             }
 
-            // Ambil daftar kamera perangkat untuk mengisi dropdown opsi secara fleksibel
-            Html5Qrcode.getCameras().then(devices => {
-                const selectElem = document.getElementById('camera-select');
-                if (devices && devices.length > 0) {
-                    selectElem.innerHTML = '';
-                    devices.forEach((device, index) => {
-                        const option = document.createElement('option');
-                        option.value = device.id;
-                        option.text = device.label || `Kamera ${index + 1}`;
-                        selectElem.appendChild(option);
-                    });
+            // Sembunyikan dropdown teks kaku agar tidak bentrok, langsung jalankan berdasarkan facingMode
+            const selectElem = document.getElementById('camera-select');
+            if (selectElem) {
+                selectElem.style.display = 'none'; // Sembunyikan elemen dropdown yang bermasalah
+            }
 
-                    // Jalankan menggunakan ID kamera dari pilihan aktif
-                    jalankanScanner({ deviceId: selectElem.value });
-
-                    // Aksi saat dropdown kamera diubah manual
-                    selectElem.onchange = function() {
-                        hentikanDanJalankanKamera({ deviceId: this.value });
-                    };
-                } else {
-                    jalankanScanner({ facingMode: gunakanKameraBelakang ? "environment" : "user" });
-                }
-            }).catch(err => {
-                console.warn("Gagal mendeteksi list perangkat kamera, menggunakan mode facingMode:", err);
-                jalankanScanner({ facingMode: gunakanKameraBelakang ? "environment" : "user" });
-            });
+            jalankanScanner({ facingMode: gunakanKameraBelakang ? "environment" : "user" });
         }
 
         function jalankanScanner(cameraConfig) {
             const config = { fps: 10, qrbox: 200 };
             
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => {
+                    eksekusiStartScanner(cameraConfig, config);
+                }).catch(() => {
+                    eksekusiStartScanner(cameraConfig, config);
+                });
+            } else {
+                eksekusiStartScanner(cameraConfig, config);
+            }
+        }
+
+        function eksekusiStartScanner(cameraConfig, config) {
             html5QrCode.start(cameraConfig, config, onScanSuccess)
             .then(() => {
                 document.getElementById('scan-result').innerHTML = 
                     `<span class="text-green-600 font-semibold">✅ Kamera Aktif. Arahkan Barcode!</span>`;
             })
             .catch(err => {
-                console.warn("Pemberitahuan fallback kamera:", err);
-                // Fallback otomatis ke modefacingMode standar jika konfigurasi deviceId gagal
-                html5QrCode.start({ facingMode: gunakanKameraBelakang ? "environment" : "user" }, config, onScanSuccess)
+                console.warn("Gagal membuka kamera utama, mencoba alternatif:", err);
+                // Fallback ke kamera depan/bebas jika ditolak
+                html5QrCode.start({ facingMode: "user" }, config, onScanSuccess)
                 .then(() => {
                     document.getElementById('scan-result').innerHTML = 
-                        `<span class="text-green-600 font-semibold">✅ Kamera Utama Aktif (Mode Alternatif). Arahkan Barcode!</span>`;
+                        `<span class="text-green-600 font-semibold">✅ Kamera Alternatif Aktif. Arahkan Barcode!</span>`;
                 })
                 .catch(e => {
                     document.getElementById('scan-result').innerHTML = 
@@ -479,20 +472,7 @@
             });
         }
 
-        function hentikanDanJalankanKamera(cameraConfig) {
-            if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().then(() => {
-                    jalankanScanner(cameraConfig);
-                }).catch(err => {
-                    console.error("Gagal menghentikan stream kamera sebelumnya:", err);
-                    jalankanScanner(cameraConfig);
-                });
-            } else {
-                jalankanScanner(cameraConfig);
-            }
-        }
-
-        // Tombol Putar Kamera (Flip) Cepat Antara Depan & Belakang
+        // Tombol Putar Kamera (Flip) Cepat Antara Depan & Belakang tanpa Bug
         function tukarKameraManual() {
             const resultDiv = document.getElementById('scan-result');
             resultDiv.innerHTML = `<span class="text-blue-600 font-semibold">🔄 Memutar posisi kamera...</span>`;
@@ -505,9 +485,8 @@
                 html5QrCode.stop().then(() => {
                     setTimeout(() => {
                         jalankanScanner(targetConfig);
-                    }, 250);
+                    }, 300);
                 }).catch(err => {
-                    console.error("Paksa putar kamera:", err);
                     jalankanScanner(targetConfig);
                 });
             } else {
