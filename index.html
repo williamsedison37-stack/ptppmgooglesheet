@@ -174,7 +174,7 @@
         let pageKaryawan = 1;
         let pageAbsen = 1;
 
-        // --- DATABASE LOCAL INDEXEDDB (VERSI 2: TERMASUK TABEL KARYAWAN & RIWAYAT) ---
+        // --- DATABASE LOCAL INDEXEDDB (VERSI 2) ---
         let db;
         const dbName = "PalmaPertiwiDB";
         const dbVersion = 2;
@@ -327,7 +327,7 @@
         let lastScanTime = 0;
         let lastScanId = "";
 
-        // --- FUNGSI PEMINDAIAN REAL-TIME GOOGLE SHEETS ---
+        // --- FUNGSI PEMINDAIAN & GOOGLE SHEETS CLOUD ---
         function onScanSuccess(decodedText) {
             if (!localStorage.getItem('OFFICIAL_DEVICE_TOKEN')) {
                 alert("Absen ditolak! Perangkat belum resmi.");
@@ -340,15 +340,8 @@
             }
 
             let nikScan = " - ";
-            let idScan = decodedText;
+            let idScan = decodedText.trim(); // Mengambil nilai ID langsung dari QR Code ringkas
             let namaScan = "Karyawan PT PPM";
-
-            if (decodedText.includes('|')) {
-                const parts = decodedText.split('|');
-                nikScan = parts[0] ? parts[0].trim() : " - ";
-                idScan = parts[1] ? parts[1].trim() : decodedText;
-                namaScan = parts[2] ? parts[2].trim() : "Karyawan PT PPM";
-            }
 
             const now = new Date();
             const jamString = now.toTimeString().split(' ')[0];
@@ -360,11 +353,12 @@
                 return;
             }
 
+            // Cari data lengkap karyawan berdasarkan ID dari database lokal
             const transaction = db.transaction(["karyawan"], "readonly");
             const storeKaryawan = transaction.objectStore("karyawan");
             storeKaryawan.getAll().onsuccess = function(eKaryawan) {
                 const listKaryawan = eKaryawan.target.result || [];
-                const karyawan = listKaryawan.find(k => k.nik === nikScan || k.id_karyawan === idScan);
+                const karyawan = listKaryawan.find(k => k.id_karyawan === idScan || k.nik === idScan);
                 
                 if (karyawan) {
                     namaScan = karyawan.nama;
@@ -425,7 +419,7 @@
             };
         }
 
-        // --- SISTEM KAMERA ANTI-ERROR (OVERCONSTRAINED SAFE) ---
+        // --- SISTEM KAMERA ANTI-ERROR ---
         let html5QrCode = null;
         let saatIniFacingMode = "environment"; 
 
@@ -472,7 +466,6 @@
                     `<span class="text-green-600 font-semibold">✅ Perangkat Siap. Arahkan Barcode!</span>`;
             })
             .catch(err => {
-                // Fallback otomatis jika opsi fleksibel ditolak
                 html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
                 .then(() => {
                     document.getElementById('scan-result').innerHTML = 
@@ -591,7 +584,8 @@
         }
 
         function tampilkanKartu(nik, id, nama, foto) {
-            const teksQr = nik + "|" + id + "|" + nama;
+            // MENGGUNAKAN FORMAT ID RINGKAS SEPERTI KARTU LAMA AGAR MUDAH DIBACA KAMERA
+            const teksQr = id;
 
             document.getElementById('container-qrcode').classList.remove('hidden');
             document.getElementById('preview-nama').innerText = nama;
