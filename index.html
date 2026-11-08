@@ -53,13 +53,10 @@
                     📱 Silakan arahkan Barcode/QR ID Card ke kamera
                 </div>
                 <div id="scanner-wrapper" class="border-2 border-dashed border-gray-300 rounded-b-lg p-2 text-center bg-gray-50 space-y-2">
-                    <!-- Tombol & Dropdown Pilih/Putar Kamera -->
-                    <div class="flex items-center justify-between space-x-2">
-                        <select id="camera-select" class="bg-white border border-gray-300 text-gray-900 text-xs rounded-lg p-2 flex-1 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Memuat daftar kamera...</option>
-                        </select>
-                        <button onclick="tukarKameraManual()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-3 py-2 rounded-lg transition-all duration-200 shadow-sm">
-                            🔄 Putar
+                    <!-- Tombol Putar Kamera -->
+                    <div class="flex items-center justify-start">
+                        <button onclick="tukarKameraManual()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-2 rounded-lg transition-all duration-200 shadow-sm flex items-center space-x-1">
+                            <span>🔄 Putar</span>
                         </button>
                     </div>
                 
@@ -418,7 +415,7 @@
             };
         }
 
-        // --- SISTEM PENGELOLAAN KAMERA YANG STABIL & BERSIH ---
+        // --- SISTEM PENGELOLAAN KAMERA YANG DIOPTIMALKAN (ANTI-BUG) ---
         let html5QrCode = null;
         let gunakanKameraBelakang = true; 
 
@@ -426,12 +423,6 @@
             if (typeof Html5Qrcode === 'undefined') return;
             if (!html5QrCode) {
                 html5QrCode = new Html5Qrcode("reader");
-            }
-
-            // Sembunyikan dropdown teks kaku agar tidak bentrok, langsung jalankan berdasarkan facingMode
-            const selectElem = document.getElementById('camera-select');
-            if (selectElem) {
-                selectElem.style.display = 'none'; // Sembunyikan elemen dropdown yang bermasalah
             }
 
             jalankanScanner({ facingMode: gunakanKameraBelakang ? "environment" : "user" });
@@ -442,25 +433,25 @@
             
             if (html5QrCode && html5QrCode.isScanning) {
                 html5QrCode.stop().then(() => {
-                    eksekusiStartScanner(cameraConfig, config);
+                    bukaKameraBaru(cameraConfig, config);
                 }).catch(() => {
-                    eksekusiStartScanner(cameraConfig, config);
+                    bukaKameraBaru(cameraConfig, config);
                 });
             } else {
-                eksekusiStartScanner(cameraConfig, config);
+                bukaKameraBaru(cameraConfig, config);
             }
         }
 
-        function eksekusiStartScanner(cameraConfig, config) {
+        function bukaKameraBaru(cameraConfig, config) {
             html5QrCode.start(cameraConfig, config, onScanSuccess)
             .then(() => {
                 document.getElementById('scan-result').innerHTML = 
                     `<span class="text-green-600 font-semibold">✅ Kamera Aktif. Arahkan Barcode!</span>`;
             })
             .catch(err => {
-                console.warn("Gagal membuka kamera utama, mencoba alternatif:", err);
-                // Fallback ke kamera depan/bebas jika ditolak
-                html5QrCode.start({ facingMode: "user" }, config, onScanSuccess)
+                const fallbackConfig = cameraConfig.facingMode === "environment" ? { facingMode: "user" } : { facingMode: "environment" };
+                
+                html5QrCode.start(fallbackConfig, config, onScanSuccess)
                 .then(() => {
                     document.getElementById('scan-result').innerHTML = 
                         `<span class="text-green-600 font-semibold">✅ Kamera Alternatif Aktif. Arahkan Barcode!</span>`;
@@ -472,25 +463,24 @@
             });
         }
 
-        // Tombol Putar Kamera (Flip) Cepat Antara Depan & Belakang tanpa Bug
+        // Tombol Putar Kamera (Flip) dengan Jeda Aman 400ms
         function tukarKameraManual() {
             const resultDiv = document.getElementById('scan-result');
             resultDiv.innerHTML = `<span class="text-blue-600 font-semibold">🔄 Memutar posisi kamera...</span>`;
 
-            // Balikkan status kamera aktif
             gunakanKameraBelakang = !gunakanKameraBelakang;
             const targetConfig = { facingMode: gunakanKameraBelakang ? "environment" : "user" };
 
             if (html5QrCode && html5QrCode.isScanning) {
                 html5QrCode.stop().then(() => {
                     setTimeout(() => {
-                        jalankanScanner(targetConfig);
-                    }, 300);
-                }).catch(err => {
-                    jalankanScanner(targetConfig);
+                        bukaKameraBaru(targetConfig, { fps: 10, qrbox: 200 });
+                    }, 400);
+                }).catch(() => {
+                    bukaKameraBaru(targetConfig, { fps: 10, qrbox: 200 });
                 });
             } else {
-                jalankanScanner(targetConfig);
+                bukaKameraBaru(targetConfig, { fps: 10, qrbox: 200 });
             }
         }
 
